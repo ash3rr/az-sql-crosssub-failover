@@ -17,7 +17,7 @@ set-AzContext -subscription $secondarysubscriptionname
 New-AzResourceGroup -Name $secondaryresourcegroupname -Location $secondaryresourcegrouplocation
 #grab secondary subscription ID
 
-New-AzSqlServer -ResourceGroupName $secondaryresourcegroupname -Location $secondaryresourcegrouplocation -ServerName $secondaryservername -SqlAdministratorCredentials (Get-Credential)
+New-AzSqlServer -ResourceGroupName $secondaryresourcegroupname -Location $secondaryresourcegrouplocation -ServerName $secondaryservername -SqlAdministratorCredentials (Get-Credential) -ExternalAdminName 'AA_DBAdmin_MSSQL-sg'
 
 $subscription_id_secondary = get-AzSubscription -SubscriptionName $secondarysubscriptionname
 #set context to primary subscription
