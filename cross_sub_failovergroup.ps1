@@ -3,17 +3,26 @@ $primarysubscriptionname = 'CRM-DMS-APAC-prd-sub'
 $primaryresourcegroupname = 'public-sqldb-apac-prd-001-rg'
 $primaryservername = 'aa03-wsql03'
 
-$failovergroupname = 'test-ha-crmdms'
+$failovergroupname = 'crm-dms-apac-ha'
 
 $secondarysubscriptionname = 'it-ba-lab-d3'
-$secondaryresourcegroupname = 'CRM-DMS-APAC-SQLDB'
-$secondaryservername = 'aa03-sql04'
+$secondaryresourcegroupname = 'public-sqldb-emea-prd-001-rg'
+$secondaryresourcegrouplocation = 'Germany West Central'
+$secondaryservername = 'aa03-wsql04'
 
-#set context to primary subscription
-set-AzContent -subscription $primarysubscriptionname
+
+#set context to secondary sub
+set-AzContext -subscription $secondarysubscriptionname
+#create secondary rg
+New-AzResourceGroup -Name $secondaryresourcegroupname -Location $secondaryresourcegrouplocation
 #grab secondary subscription ID
+
+New-AzSqlServer -ResourceGroupName $secondaryresourcegroupname -Location $secondaryresourcegrouplocation -ServerName $secondaryservername -SqlAdministratorCredentials (Get-Credential)
+
 $subscription_id_secondary = get-AzSubscription -SubscriptionName $secondarysubscriptionname
-# create the failover group object
+#set context to primary subscription
+set-AzContext -subscription $primarysubscriptionname
+# create the failover group object 
 $failoverGroup = New-AzSqlDatabaseFailoverGroup -ServerName $primaryservername -FailoverGroupName $failovergroupname -PartnerSubscriptionId $subscription_id_secondary.Id -PartnerResourceGroupName $secondaryresourcegroupname -PartnerServerName $secondaryservername -FailoverPolicy Manual -ResourceGroupName $primaryresourcegroupname
 # get all the databases on the primary 
 $databases = get-AzSqlDatabase -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername
