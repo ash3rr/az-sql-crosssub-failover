@@ -27,7 +27,7 @@ $failoverGroup = New-AzSqlDatabaseFailoverGroup -ServerName $primaryservername -
 # get all the databases on the primary 
 $databases = get-AzSqlDatabase -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername
 # put all the databases in the primary into the failover group 
-foreach ($dbName in $databases) {
- Get-AzSqlDatabase -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername  -DatabaseName $dbName.DatabaseName | Add-AzSqlDatabaseToFailoverGroup -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername  -FailoverGroupName $failovergroupname
+foreach ($db in $databases) {
+ Get-AzSqlDatabase -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername  -DatabaseName $db.DatabaseName | Add-AzSqlDatabaseToFailoverGroup -ResourceGroupName $primaryresourcegroupname -ServerName $primaryservername  -FailoverGroupName $failovergroupname
  Start-Sleep -Seconds 3
 }
